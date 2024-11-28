@@ -1,15 +1,25 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "src/index.js",
-        "use": "@vercel/node"
-      }
-    ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "src/index.js"
-      }
-    ]
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/index.js"
+    }
+  ],
+  "env": {
+    "DB_HOST":"b0elfvp7lohozonfrt4w-mysql.services.clever-cloud.com",
+    "DB_USER":"uabwkk2uhmasbyq3",
+    "DB_PASSWORD":"nzArjFu5fIHFsG8NQMmz",
+    "DB_NAME":"b0elfvp7lohozonfrt4w",
+    "JWT_SECRET": "your_jwt_secret_key",
+    "EMAIL_USER":"tpfsmt@gmail.com",
+    "EMAIL_PASS":"zpux fqtv wobi vaoj",
+    "FRONTEND_URL": "https://repofront.vercel.app"
   }
+}
