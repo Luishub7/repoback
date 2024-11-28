@@ -55,9 +55,9 @@ export const login = async (req, res) => {
     const user = rows[0];
 
     // Verificar si el usuario está verificado
-    if (!user.verified) {
+/*     if (!user.verified) {
       return res.status(400).json({ message: 'Debes verificar tu correo antes de iniciar sesión.' });
-    }
+    } */
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
