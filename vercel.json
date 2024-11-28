@@ -8,9 +8,12 @@
   ],
   "routes": [
     {
+      "src": "/verify-email/(.*)",
+      "dest": "/api/auth/verify-email/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "src/index.js"
     }
   ]
-
 }
