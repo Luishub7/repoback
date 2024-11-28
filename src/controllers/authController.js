@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import pool from '../config/db.js';
 
+// Registrar usuario
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
@@ -27,6 +28,7 @@ export const register = async (req, res) => {
   }
 };
 
+// Iniciar sesión
 export const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -52,6 +54,7 @@ export const login = async (req, res) => {
   }
 };
 
+// Obtener datos del usuario actual
 export const getMe = async (req, res) => {
   try {
     const token = req.header('Authorization')?.split(' ')[1];
@@ -67,26 +70,20 @@ export const getMe = async (req, res) => {
   }
 };
 
-// Nueva función: verifyEmail
+// Verificar email
 export const verifyEmail = async (req, res) => {
-  const { token } = req.params; // Captura el token desde la URL
+  const { token } = req.params;
 
   try {
-    // Verificar el token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // Validar que el usuario existe en la base de datos
     const [rows] = await pool.query('SELECT id, name, email FROM users WHERE id = ?', [decoded.id]);
     if (rows.length === 0) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    // Actualizar el estado del usuario para marcar que su email está verificado
     await pool.query('UPDATE users SET email_verified = ? WHERE id = ?', [true, decoded.id]);
-
     res.status(200).json({ message: 'Email verificado exitosamente' });
   } catch (err) {
-    console.error(err);
     res.status(400).json({ message: 'Token inválido o expirado' });
   }
 };

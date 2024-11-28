@@ -1,6 +1,4 @@
 // src/index.js
-
-// Importaciones
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
@@ -8,32 +6,22 @@ import authRoutes from './routes/authRoutes.js';
 import toolRoutes from './routes/toolRoutes.js';
 import pool from './config/db.js';
 
-// Inicialización de la aplicación
-const app = express(); // Mover la inicialización antes de cualquier uso de `app`
+const app = express(); // Inicializa la aplicación
 
-// Ruta de prueba de conexión a la base de datos
+// Prueba de conexión a la base de datos
 app.get('/test-db', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT 1 + 1 AS result');
     res.status(200).json({ message: 'Connection successful!', result: rows[0].result });
   } catch (error) {
-    console.error('Database connection error:', error);
     res.status(500).json({ message: 'Database connection failed', error: error.message });
   }
-});
-
-// Configuración básica de seguridad
-app.use((req, res, next) => {
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'DENY');
-  res.setHeader('X-XSS-Protection', '1; mode=block');
-  next();
 });
 
 // Configuración de CORS
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL, // Dominio del frontend en producción
+    origin: process.env.FRONTEND_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })
@@ -53,7 +41,6 @@ app.get('/', (req, res) => {
 
 // Manejo global de errores
 app.use((err, req, res, next) => {
-  console.error(err.stack);
   res.status(err.status || 500).json({ message: err.message || 'Error interno del servidor' });
 });
 

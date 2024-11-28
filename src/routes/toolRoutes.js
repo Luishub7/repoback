@@ -4,9 +4,9 @@ import { getTools, createTool, updateTool, deleteTool } from '../controllers/too
 
 const router = express.Router();
 
-router.get('/', getTools); // Obtener todas las herramientas
-router.post('/', createTool); // Crear una herramienta
-router.put('/:id', updateTool); // Modificar una herramienta
-router.delete('/:id', deleteTool); // Eliminar una herramienta
+router.get('/', getTools);
+router.post('/', createTool);
+router.put('/:id', updateTool);
+router.delete('/:id', deleteTool);
 
 export default router;
