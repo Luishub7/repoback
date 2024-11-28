@@ -2,6 +2,7 @@
 import express from 'express';
 import { register, login, verifyEmail, getMe } from '../controllers/authController.js';
 import { verifyToken } from '../middlewares/authMiddleware.js';
+import { verifyEmail } from '../controllers/authController.js';
 
 const router = express.Router();
 
