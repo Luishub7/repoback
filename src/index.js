@@ -15,7 +15,9 @@ app.use(
     credentials: true, // Permite cookies si son necesarias
   })
 );
-
+app.get('/', (req, res) => {
+  res.send('Backend activo y funcionando!');
+});
 // Middleware para analizar JSON
 app.use(express.json());
 
