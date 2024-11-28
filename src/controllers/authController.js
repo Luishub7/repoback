@@ -51,6 +51,8 @@ export const register = async (req, res) => {
     );
 
     const verificationLink = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
+    console.log(`Token de verificación generado: ${verificationToken}`);
+    console.log(`Enlace de verificación: ${verificationLink}`);
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
