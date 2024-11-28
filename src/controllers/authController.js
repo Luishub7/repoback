@@ -66,3 +66,27 @@ export const getMe = async (req, res) => {
     res.status(401).json({ message: 'Token inválido o expirado' });
   }
 };
+
+// Nueva función: verifyEmail
+export const verifyEmail = async (req, res) => {
+  const { token } = req.params; // Captura el token desde la URL
+
+  try {
+    // Verificar el token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Validar que el usuario existe en la base de datos
+    const [rows] = await pool.query('SELECT id, name, email FROM users WHERE id = ?', [decoded.id]);
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Actualizar el estado del usuario para marcar que su email está verificado
+    await pool.query('UPDATE users SET email_verified = ? WHERE id = ?', [true, decoded.id]);
+
+    res.status(200).json({ message: 'Email verificado exitosamente' });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ message: 'Token inválido o expirado' });
+  }
+};
