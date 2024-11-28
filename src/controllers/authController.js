@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import pool from '../config/db.js';
 
-// Registrar usuario
+// Registro de usuario con verificación de correo
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
@@ -21,14 +21,25 @@ export const register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    await pool.query('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', [name, email, hashedPassword]);
-    res.status(201).json({ message: 'Usuario registrado exitosamente' });
+    await pool.query(
+      'INSERT INTO users (name, email, password, verified) VALUES (?, ?, ?, ?)',
+      [name, email, hashedPassword, false] // Usuario no verificado inicialmente
+    );
+
+    // Generar un token de verificación
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    // Simulación de envío de correo (reemplaza con lógica de envío real)
+    console.log(`Verifica tu email usando el siguiente enlace: ${process.env.FRONTEND_URL}/verify-email/${token}`);
+
+    res.status(201).json({ message: 'Usuario registrado exitosamente. Por favor verifica tu correo.' });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: 'Error al registrar el usuario' });
   }
 };
 
-// Iniciar sesión
+// Inicio de sesión con verificación de estado
 export const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -42,6 +53,12 @@ export const login = async (req, res) => {
     }
 
     const user = rows[0];
+
+    // Verificar si el usuario está verificado
+    if (!user.verified) {
+      return res.status(400).json({ message: 'Debes verificar tu correo antes de iniciar sesión.' });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Correo o contraseña incorrectos' });
@@ -50,40 +67,40 @@ export const login = async (req, res) => {
     const token = jwt.sign({ id: user.id, name: user.name }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.json({ token });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: 'Error al iniciar sesión' });
   }
 };
 
-// Obtener datos del usuario actual
+// Obtener información del usuario actual
 export const getMe = async (req, res) => {
   try {
-    const token = req.header('Authorization')?.split(' ')[1];
-    if (!token) return res.status(401).json({ message: 'Token no proporcionado' });
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const [rows] = await pool.query('SELECT id, name, email FROM users WHERE id = ?', [decoded.id]);
+    const [rows] = await pool.query('SELECT id, name, email FROM users WHERE id = ?', [req.user.id]);
     if (rows.length === 0) return res.status(404).json({ message: 'Usuario no encontrado' });
-
     res.json(rows[0]);
-  } catch {
+  } catch (err) {
+    console.error(err);
     res.status(401).json({ message: 'Token inválido o expirado' });
   }
 };
 
-// Verificar email
+// Verificación de email
 export const verifyEmail = async (req, res) => {
   const { token } = req.params;
+  if (!token) return res.status(400).json({ message: 'Token requerido' });
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const [rows] = await pool.query('SELECT id, name, email FROM users WHERE id = ?', [decoded.id]);
-    if (rows.length === 0) {
+    const [user] = await pool.query('SELECT * FROM users WHERE email = ?', [decoded.email]);
+
+    if (user.length === 0) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    await pool.query('UPDATE users SET email_verified = ? WHERE id = ?', [true, decoded.id]);
-    res.status(200).json({ message: 'Email verificado exitosamente' });
+    await pool.query('UPDATE users SET verified = ? WHERE email = ?', [true, decoded.email]);
+    res.status(200).json({ message: 'Email verificado exitosamente.' });
   } catch (err) {
+    console.error(err);
     res.status(400).json({ message: 'Token inválido o expirado' });
   }
 };
