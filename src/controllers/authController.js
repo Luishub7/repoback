@@ -22,7 +22,7 @@ export const register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     await pool.query(
-      'INSERT INTO users (name, email, password, verified) VALUES (?, ?, ?, ?)',
+      'INSERT INTO users (name, email, password, is_verified) VALUES (?, ?, ?, ?)',
       [name, email, hashedPassword, false] // Usuario no verificado inicialmente
     );
 
@@ -55,7 +55,7 @@ export const login = async (req, res) => {
     const user = rows[0];
 
     // Verificar si el usuario está verificado
-/*     if (!user.verified) {
+/*     if (!user.is_verified) {
       return res.status(400).json({ message: 'Debes verificar tu correo antes de iniciar sesión.' });
     } */
 
@@ -97,7 +97,7 @@ export const verifyEmail = async (req, res) => {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    await pool.query('UPDATE users SET verified = ? WHERE email = ?', [true, decoded.email]);
+    await pool.query('UPDATE users SET is_verified = ? WHERE email = ?', [true, decoded.email]);
     res.status(200).json({ message: 'Email verificado exitosamente.' });
   } catch (err) {
     console.error(err);
