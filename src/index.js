@@ -1,4 +1,6 @@
 // src/index.js
+
+// Importaciones
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
@@ -6,6 +8,10 @@ import authRoutes from './routes/authRoutes.js';
 import toolRoutes from './routes/toolRoutes.js';
 import pool from './config/db.js';
 
+// Inicialización de la aplicación
+const app = express(); // Mover la inicialización antes de cualquier uso de `app`
+
+// Ruta de prueba de conexión a la base de datos
 app.get('/test-db', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT 1 + 1 AS result');
@@ -16,9 +22,7 @@ app.get('/test-db', async (req, res) => {
   }
 });
 
-const app = express();
-
-// Configuración básica de seguridad sin dependencias externas
+// Configuración básica de seguridad
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
@@ -38,7 +42,7 @@ app.use(
 // Middleware para analizar JSON
 app.use(express.json());
 
-// Rutas
+// Rutas de la aplicación
 app.use('/api/auth', authRoutes);
 app.use('/api/tools', toolRoutes);
 
