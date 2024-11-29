@@ -7,7 +7,7 @@ import toolRoutes from './routes/toolRoutes.js';
 import pool from './config/db.js';
 
 const app = express();
-
+console.log('Entorno actual:', process.env.NODE_ENV);
 app.get('/test-db', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT 1 + 1 AS result');
