@@ -8,12 +8,16 @@
   ],
   "routes": [
     {
+      "src": "/api/(.*)", 
+      "dest": "src/index.js" 
+    },
+    {
       "src": "/verify-email/(.*)",
       "dest": "/api/auth/verify-email/$1"
     },
     {
-      "src": "/(.*)",
-      "dest": "src/index.js"
+      "src": "/(.*)", 
+      "dest": "/index.html"
     }
   ],
   "env": {
