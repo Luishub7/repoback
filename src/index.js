@@ -24,7 +24,7 @@ app.get('/test-db', async (req, res) => {
 
 app.use(
   cors({
-    origin: FRONTEND_URL, // Usa directamente el dominio del frontend
+    origin: 'https://repofront.vercel.app',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })
