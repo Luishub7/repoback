@@ -7,7 +7,12 @@ import toolRoutes from './routes/toolRoutes.js';
 import pool from './config/db.js';
 
 const app = express();
+
+// Reemplaza el uso de process.env.FRONTEND_URL directamente con el dominio del frontend.
+const FRONTEND_URL = "https://repofront.vercel.app";
+
 console.log('Entorno actual:', process.env.NODE_ENV);
+
 app.get('/test-db', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT 1 + 1 AS result');
@@ -19,7 +24,7 @@ app.get('/test-db', async (req, res) => {
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: FRONTEND_URL, // Usa directamente el dominio del frontend
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })
@@ -33,10 +38,13 @@ app.use('/api/tools', toolRoutes);
 app.get('/', (req, res) => {
   res.send('Backend activo y funcionando en producción!');
 });
+
+// Middleware para capturar errores
 app.use((req, res, next) => {
   console.log(`Solicitud recibida: ${req.method} ${req.url}`);
   next();
 });
+
 app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ message: err.message || 'Error interno del servidor' });
 });

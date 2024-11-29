@@ -50,7 +50,7 @@ export const register = async (req, res) => {
       [name, email, hashedPassword, false, verificationToken, expirationDate]
     );
 
-    const verificationLink = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
+    const verificationLink =  `https://repofront.vercel.app/verify-email/${verificationToken}`;
     console.log(`Token de verificación generado: ${verificationToken}`);
     console.log(`Enlace de verificación: ${verificationLink}`);
     await transporter.sendMail({
