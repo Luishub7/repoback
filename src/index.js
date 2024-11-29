@@ -33,7 +33,10 @@ app.use('/api/tools', toolRoutes);
 app.get('/', (req, res) => {
   res.send('Backend activo y funcionando en producción!');
 });
-
+app.use((req, res, next) => {
+  console.log(`Solicitud recibida: ${req.method} ${req.url}`);
+  next();
+});
 app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ message: err.message || 'Error interno del servidor' });
 });
