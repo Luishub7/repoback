@@ -10,7 +10,8 @@ const app = express();
 // Configuración de CORS
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'], // Permitir múltiples orígenes
+    /* origin: ['http://localhost:3000', 'http://localhost:3001'], // Permitir múltiples orígenes */
+    origin: ['https://tu-frontend.vercel.app'], // Añade la URL de tu frontend
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos HTTP permitidos
     credentials: true, // Permite cookies si son necesarias
   })
