@@ -1,53 +1,31 @@
-// src/index.js
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
 import toolRoutes from './routes/toolRoutes.js';
-import pool from './config/db.js';
+import errorHandler from './middlewares/errorMiddleware.js';
 
 const app = express();
 
-// Reemplaza el uso de process.env.FRONTEND_URL directamente con el dominio del frontend.
-const FRONTEND_URL = "https://repofront.vercel.app";
-
-console.log('Entorno actual:', process.env.NODE_ENV);
-
-app.get('/test-db', async (req, res) => {
-  try {
-    const [rows] = await pool.query('SELECT 1 + 1 AS result');
-    res.status(200).json({ message: 'Connection successful!', result: rows[0].result });
-  } catch (error) {
-    res.status(500).json({ message: 'Database connection failed', error: error.message });
-  }
-});
-
+// Configuración de CORS
 app.use(
   cors({
-    origin: 'https://repofront.vercel.app',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
+    origin: ['http://localhost:3000', 'http://localhost:3001'], // Permitir múltiples orígenes
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos HTTP permitidos
+    credentials: true, // Permite cookies si son necesarias
   })
 );
 
+// Middleware para analizar JSON
 app.use(express.json());
 
-app.use('/api/auth', authRoutes);
-app.use('/api/tools', toolRoutes);
+// Rutas de autenticación y herramientas
+app.use('/api/auth', authRoutes); // Rutas de autenticación
+app.use('/api/tools', toolRoutes); // Rutas de herramientas
 
-app.get('/', (req, res) => {
-  res.send('Backend activo y funcionando en producción!');
-});
+// Middleware de manejo de errores
+app.use(errorHandler);
 
-// Middleware para capturar errores
-app.use((req, res, next) => {
-  console.log(`Solicitud recibida: ${req.method} ${req.url}`);
-  next();
-});
-
-app.use((err, req, res, next) => {
-  res.status(err.status || 500).json({ message: err.message || 'Error interno del servidor' });
-});
-
+// Inicio del servidor
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Servidor en producción en el puerto ${PORT}`));
+app.listen(PORT, () => console.log(`Servidor ejecutándose en el puerto ${PORT}`));
