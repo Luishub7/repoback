@@ -10,7 +10,7 @@ const app = express();
 // Configuración de CORS
 app.use(
   cors({
-    origin: ['https://repofront.vercel.app',], // Cambia por la URL correcta del frontend desplegado en Vercel.
+    origin: ['https://repofront.vercel.app','https://repofront-17ec3ftfw-albertos-projects-806c00fd.vercel.app/'], // Cambia por la URL correcta del frontend desplegado en Vercel.
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })
