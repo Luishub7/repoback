@@ -10,7 +10,7 @@ import pool from '../config/db.js';
 
 
 // Registrar un nuevo usuario
-export const registerUser = async (req, res) => {
+/* export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
   // Validación de datos
@@ -34,7 +34,7 @@ export const registerUser = async (req, res) => {
     res.status(500).json({ message: 'Error al registrar el usuario', error: err.message });
   }
 };
-
+ */
 
 // Configuración de Nodemailer
 const transporter = nodemailer.createTransport({
